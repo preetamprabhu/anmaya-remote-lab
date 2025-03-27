@@ -1,0 +1,8 @@
+tunnel: 9ba390d0-e66c-4eb7-85c7-f5f52cd3f393
+credentials-file: C:\Users\19516\.cloudflared\9ba390d0-e66c-4eb7-85c7-f5f52cd3f393.json
+ingress:
+  - hostname: chukkitechnologies.com
+    service: http://localhost:5173  # Using explicit http:// scheme and IP
+  - hostname: api.chukkitechnologies.com
+    service: http://localhost:3000  # Using explicit http:// scheme and IP
+  - service: http_status:404

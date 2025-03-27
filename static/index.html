@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="/icon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Lab - Server</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #1e1e1e;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 1px solid #59bdff;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        .status-card {
+            background: #2a2a2a;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            color: #ffffff;
+            border: 1px solid #222;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .server-info {
+            margin-top: 2rem;
+            color: #b0b0b0;
+            line-height: 1.6;
+        }
+
+        footer {
+            margin-top: 2rem;
+            color: #808080;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator.online {
+            background: #00ff9d;
+            box-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        
+        .status-indicator.offline {
+            background: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+        }
+        
+        .status-text {
+            font-weight: 500;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Remote Lab - Server</h1>
+        
+        <div class="status-card">
+            <span class="status-indicator"></span>
+            <span class="status-text">Checking server status...</span>
+        </div>
+
+        <div class="server-info">
+            <p>Welcome to the Remote Lab Server Interface</p>
+            <p>This server manages remote laboratory experiments and provides real-time access to lab equipment.</p>
+        </div>
+
+        <footer>
+            <p>© 2024 Remote Lab System</p>
+        </footer>
+    </div>
+
+    <script>
+        const statusIndicator = document.querySelector('.status-indicator');
+        const statusText = document.querySelector('.status-text');
+
+        async function checkServerStatus() {
+            try {
+                // Replace '/api/health' with your actual server health check endpoint
+                const response = await fetch('/api/health', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    statusIndicator.className = 'status-indicator online';
+                    statusText.textContent = 'Server Status: Online';
+                } else {
+                    throw new Error('Server returned error');
+                }
+            } catch (error) {
+                statusIndicator.className = 'status-indicator offline';
+                statusText.textContent = 'Server Status: Offline';
+            }
+        }
+
+        // Check status immediately when page loads
+        checkServerStatus();
+
+        // Then check every 30 seconds
+        setInterval(checkServerStatus, 30000);
+    </script>
+</body>
+</html>
