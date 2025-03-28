@@ -43,15 +43,15 @@ app.use(express.static(require("path").join(process.cwd(), "static")));
 wss.on("connection", (ws) => {
   console.log("Client connected");
 
-  // For Raspberry Pi, we'll use v4l2 instead of dshow
   const ffmpeg = spawn('ffmpeg', [
     '-f', 'v4l2',
-    '-input_format', 'mjpeg',
-    '-i', '/dev/video0',  // USB camera device on Raspberry Pi
+    '-input_format', 'yuyv422',  // Using the supported format
+    '-video_size', '640x480',    // Using supported resolution
+    '-i', '/dev/video0',
     '-vf', 'scale=640:480',
     '-f', 'mjpeg',
-    '-q:v', '5',         // Adjust quality (1-31, lower is better)
-    '-r', '30',          // Frame rate
+    '-q:v', '5',                 // Quality factor (1-31, lower is better)
+    '-r', '30',                  // Frame rate
     'pipe:1'
   ]);
 

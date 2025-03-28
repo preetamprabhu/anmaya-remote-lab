@@ -5,8 +5,7 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Replace with your Raspberry Pi's IP address
-    const ws = new WebSocket("ws://YOUR_RASPBERRY_PI_IP:4000");
+    const ws = new WebSocket("ws://192.168.29.97:4000");
 
     ws.binaryType = "blob";
     
