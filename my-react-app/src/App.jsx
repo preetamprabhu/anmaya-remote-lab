@@ -5,7 +5,7 @@ function App() {
   const [connectionStatus, setConnectionStatus] = useState('Connecting...');
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:4000`);
+    const ws = new WebSocket(`ws://192.168.29.97:4000`);
 
     ws.onopen = () => {
       setConnectionStatus('Connected');
