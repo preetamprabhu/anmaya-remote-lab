@@ -43,12 +43,15 @@ app.use(express.static(require("path").join(process.cwd(), "static")));
 wss.on("connection", (ws) => {
   console.log("Client connected");
 
-  // For Windows, we'll use DirectShow (dshow) instead of v4l2
+  // For Raspberry Pi, we'll use v4l2 instead of dshow
   const ffmpeg = spawn('ffmpeg', [
-    '-f', 'dshow',
-    '-i', 'video=USB Video Device', // Default webcam name, might need to be adjusted
+    '-f', 'v4l2',
+    '-input_format', 'mjpeg',
+    '-i', '/dev/video0',  // USB camera device on Raspberry Pi
     '-vf', 'scale=640:480',
     '-f', 'mjpeg',
+    '-q:v', '5',         // Adjust quality (1-31, lower is better)
+    '-r', '30',          // Frame rate
     'pipe:1'
   ]);
 
@@ -60,6 +63,10 @@ wss.on("connection", (ws) => {
 
   ffmpeg.stderr.on('data', (data) => {
     console.log(`FFmpeg stderr: ${data}`);
+  });
+
+  ffmpeg.on("error", (err) => {
+    console.error("FFmpeg process error:", err);
   });
 
   ws.on("close", () => {
