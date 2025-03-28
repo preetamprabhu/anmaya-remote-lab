@@ -9,7 +9,7 @@ const helmet = require("helmet");
 const errorHandler = require("./utils/errorHandler");
 const CustomError = require("./utils/CustomError");
 require("dotenv").config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // CORS configuration
 const corsOptions = {
