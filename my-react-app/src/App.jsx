@@ -1,58 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 function App() {
-  const videoRef = useRef(null);
-  const [connectionStatus, setConnectionStatus] = useState('Connecting...');
-  const [imageUrl, setImageUrl] = useState(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://192.168.29.97:4000`);
+    const ws = new WebSocket("ws://192.168.29.97:4000");
 
-    ws.onopen = () => {
-      setConnectionStatus('Connected');
-    };
-
+    ws.binaryType = "blob";
     ws.onmessage = (event) => {
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl); // Revoke previous URL before setting a new one
-      }
-      const newUrl = URL.createObjectURL(new Blob([event.data], { type: "image/jpeg" }));
-      setImageUrl(newUrl);
+      const img = new Image();
+      img.src = URL.createObjectURL(event.data);
+      img.onload = () => {
+        const ctx = canvasRef.current.getContext("2d");
+        ctx.drawImage(img, 0, 0, 640, 480);
+      };
     };
 
-    ws.onerror = () => {
-      setConnectionStatus('Connection failed');
-    };
+    return () => ws.close();
+  }, []);
 
-    ws.onclose = () => {
-      setConnectionStatus('Disconnected');
-    };
-
-    return () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-      if (imageUrl) {
-        URL.revokeObjectURL(imageUrl);
-      }
-    };
-  }, [imageUrl]);
-
-  return (
-    <div style={{ textAlign: 'center', padding: '20px' }}>
-      <h2>Live Stream</h2>
-      <p>Status: {connectionStatus}</p>
-      <img 
-        src={imageUrl || ''} 
-        alt="Live Stream" 
-        style={{ 
-          maxWidth: '100%',
-          border: '1px solid #ccc',
-          borderRadius: '8px'
-        }}
-      />
-    </div>
-  );
+  return <canvas ref={canvasRef} width={640} height={480} />;
 }
 
 export default App;
