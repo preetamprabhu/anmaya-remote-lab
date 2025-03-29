@@ -5,7 +5,7 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://192.168.29.97:4000");
+    const ws = new WebSocket("ws://192.168.29.97:3000");
 
     ws.binaryType = "blob";
     
