@@ -8,6 +8,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const errorHandler = require("./utils/errorHandler");
 const CustomError = require("./utils/CustomError");
+const setupWebSocketRoutes = require('./routes/websocketRouter');
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
@@ -101,6 +102,9 @@ app.use(errorHandler);
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// WebSocket routing
+setupWebSocketRoutes(wss);
 
 
 
