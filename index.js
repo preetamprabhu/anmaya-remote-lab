@@ -7,7 +7,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const errorHandler = require("./utils/errorHandler");
 const CustomError = require("./utils/CustomError");
-const setupWebSocketRoutes = require('./routes/websocket.route');
+const setupWebSocketRoutes = require('./routes/websocket.route.js');
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
