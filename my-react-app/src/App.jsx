@@ -2,35 +2,31 @@ import { useEffect, useRef, useState } from "react";
 
 function App() {
   const canvasRef = useRef(null);
-  const [connectionStatus, setConnectionStatus] = useState('Disconnected');
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
     const ws = new WebSocket("ws://192.168.29.97:4000");
 
+    ws.binaryType = "blob";
+    
     ws.onopen = () => {
-      setConnectionStatus('Connected');
-      console.log("Connected to WebSocket server");
+      setIsConnected(true);
+      console.log("Connected to server");
     };
 
-    ws.binaryType = "blob";
+    ws.onclose = () => {
+      setIsConnected(false);
+      console.log("Disconnected from server");
+    };
+
     ws.onmessage = (event) => {
       const img = new Image();
       img.src = URL.createObjectURL(event.data);
       img.onload = () => {
         const ctx = canvasRef.current.getContext("2d");
         ctx.drawImage(img, 0, 0, 640, 480);
-        URL.revokeObjectURL(img.src); // Clean up blob URL
+        URL.revokeObjectURL(img.src); // Clean up the blob URL
       };
-    };
-
-    ws.onclose = () => {
-      setConnectionStatus('Disconnected');
-      console.log("Disconnected from WebSocket server");
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setConnectionStatus('Error');
     };
 
     return () => {
@@ -41,18 +37,19 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
-      <div className="status-bar">
-        <p>Status: {connectionStatus}</p>
+    <div>
+      <div style={{ textAlign: 'center', margin: '20px' }}>
+        <h2>Raspberry Pi Camera Stream</h2>
+        <p>Status: {isConnected ? 'Connected' : 'Disconnected'}</p>
       </div>
       <canvas 
         ref={canvasRef} 
         width={640} 
         height={480} 
         style={{
-          border: '1px solid #ccc',
           display: 'block',
-          margin: '20px auto'
+          margin: '0 auto',
+          border: '1px solid #ccc'
         }}
       />
     </div>

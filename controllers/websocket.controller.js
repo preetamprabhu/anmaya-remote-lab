@@ -1,4 +1,5 @@
 const { spawn } = require("child_process");
+const WebSocket = require('ws');  // Add this import
 
 class WebSocketController {
   handleConnection(ws) {
@@ -23,7 +24,7 @@ class WebSocketController {
 
   setupEventListeners(ws, ffmpeg) {
     ffmpeg.stdout.on("data", (data) => {
-      if (ws.readyState === WebSocket.OPEN) {
+      if (ws.readyState === WebSocket.OPEN) {  // Now WebSocket.OPEN will be defined
         ws.send(data);
       }
     });
