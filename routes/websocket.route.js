@@ -1,4 +1,4 @@
-const WebSocketController = require("./controllers/websocket.controller");
+const WebSocketController = require("../controllers/websocket.controller");
 
 function setupWebSocketRoutes(wss) {
   wss.on("connection", (ws) => {
