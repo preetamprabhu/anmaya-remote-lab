@@ -8,6 +8,8 @@ const helmet = require("helmet");
 const errorHandler = require("./utils/errorHandler");
 const CustomError = require("./utils/CustomError");
 const setupWebSocketRoutes = require('./routes/websocket.route.js');
+const healthRoutes = require('./routes/health.route');
+const path = require('path');
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
@@ -42,17 +44,15 @@ app.use(express.static(require("path").join(process.cwd(), "static")));
 // Setup WebSocket routes
 setupWebSocketRoutes(wss);
 
+// Routes
+app.use('/api', healthRoutes);
 app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'static', 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'static', 'index.html'));
 });
 
-app.get("/send-message", (req, res) => {
-  res.status(200).json({ status: "ok", message: "Connected to server!" });
-});
-
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok", message: "Connected to server!" });
-});
+// Remove these as they're now handled by the health routes
+// app.get("/send-message", (req, res) => {...});
+// app.get("/api/health", (req, res) => {...});
 
 // Handle undefined routes
 app.all("*", (req, res, next) => {
