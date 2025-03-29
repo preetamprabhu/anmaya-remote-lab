@@ -1,6 +1,5 @@
 const express = require("express");
 const WebSocket = require("ws");
-const { spawn } = require("child_process");
 const app = express();
 const server = require("http").createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -8,7 +7,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const errorHandler = require("./utils/errorHandler");
 const CustomError = require("./utils/CustomError");
-const setupWebSocketRoutes = require('./routes/websocketRouter');
+const setupWebSocketRoutes = require('./routes/websocket.route');
 require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
@@ -40,41 +39,8 @@ app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
 app.use(express.static(require("path").join(process.cwd(), "static")));
 
-// WebSocket connection handling
-wss.on("connection", (ws) => {
-  console.log("Client connected");
-
-  const ffmpeg = spawn('ffmpeg', [
-    '-f', 'v4l2',
-    '-input_format', 'yuyv422',  // Using the supported format
-    '-video_size', '640x480',    // Using supported resolution
-    '-i', '/dev/video0',
-    '-vf', 'scale=640:480',
-    '-f', 'mjpeg',
-    '-q:v', '5',                 // Quality factor (1-31, lower is better)
-    '-r', '30',                  // Frame rate
-    'pipe:1'
-  ]);
-
-  ffmpeg.stdout.on("data", (data) => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(data);
-    }
-  });
-
-  ffmpeg.stderr.on('data', (data) => {
-    console.log(`FFmpeg stderr: ${data}`);
-  });
-
-  ffmpeg.on("error", (err) => {
-    console.error("FFmpeg process error:", err);
-  });
-
-  ws.on("close", () => {
-    ffmpeg.kill("SIGINT");
-    console.log("Client disconnected");
-  });
-});
+// Setup WebSocket routes
+setupWebSocketRoutes(wss);
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'static', 'index.html'));
@@ -102,9 +68,6 @@ app.use(errorHandler);
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-// WebSocket routing
-setupWebSocketRoutes(wss);
 
 
 
