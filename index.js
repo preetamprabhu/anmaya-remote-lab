@@ -43,11 +43,6 @@ app.use(express.static(require("path").join(process.cwd(), "static")));
 // Setup WebSocket routes
 setupWebSocketRoutes(wss);
 
-// Routes
-app.use('/api', healthRoutes);
-app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'static', 'index.html'));
-});
 
 // Remove these as they're now handled by the health routes
 // app.get("/send-message", (req, res) => {...});
